@@ -38,8 +38,8 @@ const Login = ({getState, handlerError}) => {
       localStorage.setItem("token", token);
     }
     catch(error) {
-      console.log(error.message)
-     handlerError(error )
+      
+     handlerError({...error,message:"wrong username or password" })
     }
 
     setUser((user) => ({ ...user, password: "" }));

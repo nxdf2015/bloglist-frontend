@@ -9,7 +9,7 @@ const CreateBlog =  ({ addBlog , handlerError }) => {
     event.preventDefault();
      blogService.create(blog)
        .then(response => addBlog(response.data))
-       .catch(error => handlerError(error.response))
+       .catch(error => handlerError({...error.response , message:"error creation blog all fields required"}))
     
      
   };

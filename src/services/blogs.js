@@ -1,28 +1,44 @@
-import axios from 'axios'
-const baseUrl = '/api/blogs'
+import axios from "axios";
+const baseUrl = "/api/blogs";
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
-}
+  const request = axios.get(baseUrl);
+  return request.then((response) => response.data);
+};
 
 const create = async (blog) => {
-  let response
-   
-    response = await axios({
-    method: 'POST',
-    url : baseUrl,
-    headers : {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+  const response = await axios({
+    method: "POST",
+    url: baseUrl,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    data : blog
-  } )
-  return response 
+    data: blog,
+  });
+  return response;
+};
 
-}
-  
-  
+const update = async (blog) => {
+  const response = await axios({
+    method: "PUT",
+    url: baseUrl + "/" + blog.id,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    data: { blog, likes: blog.likes + 1 },
+  });
+  return response;
+};
 
+const remove = async (blog) => {
+  const response = await axios({
+    method: "DELETE",
+    url: baseUrl + "/" + blog.id,
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  });
+  return response;
+};
 
-
-export default { getAll ,create }
+export default { getAll, create, update, remove };

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Blog from "./components/Blog";
+import Blogs from "./components/Blogs";
 import blogService from "./services/blogs";
 
 import Login from "./components/Login";
 import CreateBlog from "./components/CreateBlog";
 import Notification from "./components/Notification";
+
+import "./App.css";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -21,6 +23,8 @@ const App = () => {
   const [visible, setVisible] = useState(false);
 
   const [type, setType] = useState("success");
+
+  const [sorted, setSorted] = useState(false);
 
   const getState = (state, response) => {
     setLogged(state);
@@ -52,13 +56,27 @@ const App = () => {
     setTimeout(() => setVisible(false), 2000);
   };
 
-  const handlerError = ({ data, status, message }) => {
-    console.log(data);
-
+  const handlerError = ({ data, status, message, type }) => {
     wait(() => {
       setType("error");
-      setMessage(message);
+      setMessage(message || data);
     });
+  };
+
+  const updateBlog = (id) => {
+    setBlogs((blogs) =>
+      blogs.map((blog) =>
+        blog.id === id ? { ...blog, likes: blog.likes + 1 } : blog
+      )
+    );
+  };
+
+  const removeBlog = (id) => {
+      setBlogs(blogs => blogs.filter(blog => blog.id !== id ))
+  }
+
+  const handleSortBlog = () => {
+    setSorted(true);
   };
 
   return (
@@ -71,9 +89,9 @@ const App = () => {
 
           <h2>blogs</h2>
           <CreateBlog addBlog={addBlog} handlerError={handlerError} />
-          {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
-          ))}
+          <button onClick={handleSortBlog}>sort by like</button>
+
+          <Blogs blogs={blogs} removeBlog={removeBlog} updateBlog={updateBlog} sorted={sorted}/>
         </div>
       )}
     </div>
