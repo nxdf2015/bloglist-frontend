@@ -3,7 +3,7 @@ import React, {   useState, useEffect } from "react";
 import usersService from "../services/users";
  
 
-const Login = ({getState}) => {
+const Login = ({getState, handlerError}) => {
   const [user, setUser] = useState({username:"",password:""});
   const [token, setToken] = useState(null);
 
@@ -27,16 +27,19 @@ const Login = ({getState}) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-   
-    const response = await usersService.create(user);
-    if (response.status  === 200) {
+    let response 
+    try {
+      response =  await  usersService.create(user)
+         
+    
       const token = response.data.token
       setToken(token);
       getState(true,{status : 200})
       localStorage.setItem("token", token);
     }
-    else {
-      getState(false , response )
+    catch(error) {
+      console.log(error.message)
+     handlerError(error )
     }
 
     setUser((user) => ({ ...user, password: "" }));

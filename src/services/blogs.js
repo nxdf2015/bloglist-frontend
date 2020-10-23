@@ -8,7 +8,7 @@ const getAll = () => {
 
 const create = async (blog) => {
   let response
-  try{
+   
     response = await axios({
     method: 'POST',
     url : baseUrl,
@@ -21,11 +21,8 @@ const create = async (blog) => {
 
 }
   
-  catch(error){
-    return error.response
-  }
+  
 
 
-}
 
 export default { getAll ,create }
