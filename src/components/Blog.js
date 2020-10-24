@@ -20,10 +20,10 @@ const Blog = ({ blog , updateBlog, removeBlog }) => {
   }
 
   return (
-    <div className="blog-container">
-      {detailsVisible ? <BlogDetails {...blog} handlerLike={handlerLike} /> : blog.title}
+    <div className='blog-container'>
+      {detailsVisible ? <BlogDetails blog={blog} handlerLike={handlerLike} /> : <div className='blog-info'>{blog.title}</div>}
 
-      <button onClick={() => setVisible((visible) => !visible)}>
+      <button className='btn-view' onClick={() => setVisible((visible) => !visible)}>
         {detailsVisible ? 'hidde' : 'view'}
       </button>
 
@@ -34,7 +34,7 @@ const Blog = ({ blog , updateBlog, removeBlog }) => {
 
 
 const BlogDetails = ({   title, author, likes ,handlerLike }) => (
-  <div>
+  <div className="blog-details">
     <div>{title}</div>
     <div>{author}</div>
     <div>likes {likes} <button onClick={handlerLike} >like</button></div>
