@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
-import blogService from "../services/blogs";
+import blogService from '../services/blogs'
 
 const CreateBlog =  ({ addBlog , handlerError }) => {
-  const [blog, setBlog] = useState({ title: "", author: "", url: "" });
+  const [blog, setBlog] = useState({ title: '', author: '', url: '' })
 
   const handleCreate =async (event) => {
-    event.preventDefault();
-     blogService.create(blog)
-       .then(response => addBlog(response.data))
-       .catch(error => handlerError({...error.response , message:"error creation blog all fields required"}))
-    
-     
-  };
+    event.preventDefault()
+    blogService.create(blog)
+      .then(response => addBlog(response.data))
+      .catch(error => handlerError({ ...error.response , message:'error creation blog all fields required' }))
+
+
+  }
 
   return (
     <div>
@@ -62,7 +62,7 @@ const CreateBlog =  ({ addBlog , handlerError }) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default CreateBlog;
+export default CreateBlog
