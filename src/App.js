@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import Blogs from './components/Blogs'
-import blogService from './services/blogs'
 
+import blogService from './services/blogs'
+import usersService from './services/users'
+
+import Blogs from './components/Blogs'
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
@@ -26,17 +28,32 @@ const App = () => {
 
   const [sorted, setSorted] = useState(false)
 
-  const getState = (state, response) => {
-    setLogged(state)
-    setMessage(state ? 'logged' : 'deconnected')
+  const handlerLogin = ({   user }) => {
 
-    if (response.status === 200) {
-      setType('success')
-    } else {
-      setType('error')
+    if(user){
+
+      usersService.create(user)
+        .then(response => {
+          const token = response.data.token
+          localStorage.setItem('token', token)
+          setLogged(true, () => true)
+          successNotification( 'logged' )
+
+
+        })
+        .catch(error => {handlerError({ data:error.data , message:'wrong username or password' })
+
+          setLogged(false, () => false)
+        }
+
+        )
     }
-    setVisible(true)
-    setTimeout(() => setVisible(false), 2000)
+    else {
+      successNotification('deconnected')
+      setLogged(false,() => false)
+
+    }
+
   }
 
   const notification = (message,type) => {
@@ -90,7 +107,7 @@ const App = () => {
 
   return (
     <div>
-      <Login getState={getState} handlerError={handlerError} />
+      <Login handlerLogin={handlerLogin} />
       {visible && <Notification message={message} type={type} />}
       {logged && (
         <div>
