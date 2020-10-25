@@ -1,26 +1,7 @@
-import React, {   useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
-import usersService from '../services/users'
-
-
-const Login = ({ getState, handlerError }) => {
-  const [user, setUser] = useState({ username:'',password:'' })
-  const [isLogged, setLogStatus] = useState(false)
-
-  useEffect(() => {
-    const getToken = async () => {
-      const token = localStorage.getItem('token')
-
-      if (token ) {
-        setLogStatus(true)
-        usersService.decodeToken(token)
-          .then(response => setUser({ username : response.data.username }))
-
-
-      }
-    }
-    getToken()
-  }, [])
+const Login = ({ setLogin, setLogOut, isLogged }) => {
+  const [user, setUser] = useState({ username: '', password: '' })
 
   const handlerLog = ({ target }) => {
     setUser((user) => ({ ...user, [target.name]: target.value }))
@@ -28,74 +9,60 @@ const Login = ({ getState, handlerError }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    let response
-    try {
-      response =  await  usersService.create(user)
 
-
-      const token = response.data.token
-      setLogStatus(true)
-      getState(true,{ status : 200 })
-      localStorage.setItem('token', token)
-    }
-    catch(error) {
-
-      handlerError({ ...error,message:'wrong username or password' })
-    }
+    setLogin(user)
 
     setUser((user) => ({ ...user, password: '' }))
   }
 
+
+
   const logout = () => {
-    setLogStatus(false)
-    getState(false,{ status : 200 })
-    localStorage.removeItem('token')
+    setLogOut()
   }
 
-
-
-  return <div>
-    {!isLogged  ?
-      <>
-        <h2>Log in to application</h2>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>
+  return (
+    <div>
+      {isLogged ? (
+        <>
+          <span> {`${user.username} logged in`}</span>
+          <button onClick={logout}>logout</button>
+        </>
+      ) : (
+        <>
+          <h2>Log in to application</h2>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>
                 username
-              <input type="text"
-                name="username"
-                onChange={handlerLog}
-                value={user.username}
-
-              />
-            </label>
-          </div>
-          <div>
-            <label>
+                <input
+                  type="text"
+                  name="username"
+                  onChange={handlerLog}
+                  value={user.username}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
                 password
-              <input type="password"
-                name="password"
-                onChange={handlerLog}
-                value={user.password}
-                placeholder="password"
-              />
-            </label>
-          </div>
-          <div>
-            <button type="submit" >login</button>
-          </div>
-        </form>
-      </>
-      :
-      <>
-        <span> {`${user.username} logged in`}</span>
-        <button onClick={logout}>logout</button>
-      </>
-    }
-
-
-  </div>
-
+                <input
+                  type="password"
+                  name="password"
+                  onChange={handlerLog}
+                  value={user.password}
+                  placeholder="password"
+                />
+              </label>
+            </div>
+            <div>
+              <button type="submit">login</button>
+            </div>
+          </form>
+        </>
+      )}
+    </div>
+  )
 }
 
 export default Login
