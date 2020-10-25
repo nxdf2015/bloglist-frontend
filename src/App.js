@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
-
-import blogService from './services/blogs'
-import usersService from './services/users'
-
 import Blogs from './components/Blogs'
+import blogService from './services/blogs'
+
 import Login from './components/Login'
 import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
@@ -28,32 +26,24 @@ const App = () => {
 
   const [sorted, setSorted] = useState(false)
 
-  const handlerLogin = ({   user }) => {
+  const getState = (state, response) => {
+    setLogged(state)
+    setMessage(state ? 'logged' : 'deconnected')
 
-    if(user){
-
-      usersService.create(user)
-        .then(response => {
-          const token = response.data.token
-          localStorage.setItem('token', token)
-          setLogged(true, () => true)
-          successNotification( 'logged' )
-
-
-        })
-        .catch(error => {handlerError({ data:error.data , message:'wrong username or password' })
-
-          setLogged(false, () => false)
-        }
-
-        )
+    if (response.status === 200) {
+      setType('success')
+    } else {
+      setType('error')
     }
-    else {
-      successNotification('deconnected')
-      setLogged(false,() => false)
+    setVisible(true)
+    setTimeout(() => setVisible(false), 2000)
+  }
 
-    }
 
+  const wait = (f) => {
+    setVisible(true)
+    f()
+    setTimeout(() => setVisible(false), 2000)
   }
 
   const notification = (message,type) => {
@@ -62,19 +52,14 @@ const App = () => {
 
   }
   const successNotification = message => notification(message,'success')
+
   const errorNotification = message => notification(message,'error')
-
-  const wait = (f) => {
-    setVisible(true)
-    f()
-    setTimeout(() => setVisible(false), 2000)
-  }
-
 
   const addBlog = (blog) => {
 
     blogService.create(blog)
       .then(({ data }) => {
+
         successNotification(`A new blog ${blog.title} by ${blog.author} added`)
         setBlogs((blogs) => [...blogs, data])})
       .catch(error => handlerError({ ...error.response , message:'error creation blog all fields required' }))
@@ -107,14 +92,14 @@ const App = () => {
 
   return (
     <div>
-      <Login handlerLogin={handlerLogin} />
+      <Login getState={getState} handlerError={handlerError} />
       {visible && <Notification message={message} type={type} />}
       {logged && (
         <div>
           {logged}
 
           <h2>blogs</h2>
-          <CreateBlog addBlog={addBlog}  />
+          <CreateBlog addBlog={addBlog} handlerError={handlerError} />
           <button onClick={handleSortBlog}>sort by like</button>
 
           <Blogs

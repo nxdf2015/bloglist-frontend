@@ -3,23 +3,21 @@ import React, {   useState, useEffect } from 'react'
 import usersService from '../services/users'
 
 
-const Login = ({ handlerLogin }) => {
+const Login = ({ getState, handlerError }) => {
   const [user, setUser] = useState({ username:'',password:'' })
-  const [isLog, setLogStatus ] = useState(false)
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
     const getToken = async () => {
       const token = localStorage.getItem('token')
 
       if (token) {
-        // setToken(token)
+        setToken(token)
         usersService.decodeToken(token)
-          .then(response =>
-            setUser({ username : response.data.username }))
-        setLogStatus(true)}
-      // .catch(error => handlerError({ data: error.data , message : 'invalid token' }))
+          .then(response => setUser({ username : response.data.username }))
+          //.catch(error => handlerError({ data: error.data , message : 'invalid token' }))
 
-
+      }
     }
     getToken()
   }, [])
@@ -30,25 +28,34 @@ const Login = ({ handlerLogin }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    setLogStatus(handlerLogin({ user  }))
-    setUser((user) => ({ ...user, password: ' ' }))
+    let response
+    try {
+      response =  await  usersService.create(user)
 
+
+      const token = response.data.token
+      setToken(token)
+      getState(true,{ status : 200 })
+      localStorage.setItem('token', token)
+    }
+    catch(error) {
+
+      handlerError({ ...error,message:'wrong username or password' })
+    }
+
+    setUser((user) => ({ ...user, password: '' }))
   }
 
   const logout = () => {
+    setToken(null)
+    getState(false,{ status : 200 })
     localStorage.removeItem('token')
-    handlerLogin({ user : null })
-    setLogStatus(false)
   }
 
 
 
   return <div>
-    {isLog === null ?
-      <>
-        <span> {`${user.username} logged in`}</span>
-        <button onClick={logout}>logout</button>
-      </>:
+    {token === null ?
       <>
         <h2>Log in to application</h2>
         <form onSubmit={handleSubmit}>
@@ -79,8 +86,11 @@ const Login = ({ handlerLogin }) => {
           </div>
         </form>
       </>
-
-
+      :
+      <>
+        <span> {`${user.username} logged in`}</span>
+        <button onClick={logout}>logout</button>
+      </>
     }
 
 
