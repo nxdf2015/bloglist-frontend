@@ -5,14 +5,14 @@ import usersService from '../services/users'
 
 const Login = ({ getState, handlerError }) => {
   const [user, setUser] = useState({ username:'',password:'' })
-  const [token, setToken] = useState(null)
+  const [isLogged, setLogStatus] = useState(false)
 
   useEffect(() => {
     const getToken = async () => {
       const token = localStorage.getItem('token')
 
-      if (token) {
-        setToken(token)
+      if (token ) {
+        setLogStatus(true)
         usersService.decodeToken(token)
           .then(response => setUser({ username : response.data.username }))
 
@@ -34,7 +34,7 @@ const Login = ({ getState, handlerError }) => {
 
 
       const token = response.data.token
-      setToken(token)
+      setLogStatus(true)
       getState(true,{ status : 200 })
       localStorage.setItem('token', token)
     }
@@ -47,7 +47,7 @@ const Login = ({ getState, handlerError }) => {
   }
 
   const logout = () => {
-    setToken(null)
+    setLogStatus(false)
     getState(false,{ status : 200 })
     localStorage.removeItem('token')
   }
@@ -55,7 +55,7 @@ const Login = ({ getState, handlerError }) => {
 
 
   return <div>
-    {token === null ?
+    {!isLogged  ?
       <>
         <h2>Log in to application</h2>
         <form onSubmit={handleSubmit}>
