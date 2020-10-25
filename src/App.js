@@ -39,16 +39,13 @@ const App = () => {
     setTimeout(() => setVisible(false), 2000)
   }
 
-  const addBlog = (response) => {
-    setVisible(true)
+  const notification = (message,type) => {
+    setType(type)
+    wait(() => setMessage(message))
 
-    const blog = response
-    setType('success')
-    setMessage(`A new blog ${blog.title} by ${blog.author} added`)
-    setBlogs((blogs) => [...blogs, blog])
-
-    setTimeout(() => setVisible(false), 2000)
   }
+  const successNotification = message => notification(message,'success')
+  const errorNotification = message => notification(message,'error')
 
   const wait = (f) => {
     setVisible(true)
@@ -56,19 +53,31 @@ const App = () => {
     setTimeout(() => setVisible(false), 2000)
   }
 
-  const handlerError = ({ data, message }) => {
-    wait(() => {
-      setType('error')
-      setMessage(message || data)
-    })
+
+  const addBlog = (blog) => {
+
+    blogService.create(blog)
+      .then(({ data }) => {
+        successNotification(`A new blog ${blog.title} by ${blog.author} added`)
+        setBlogs((blogs) => [...blogs, data])})
+      .catch(error => handlerError({ ...error.response , message:'error creation blog all fields required' }))
+
   }
 
-  const updateBlog = (id) => {
-    setBlogs((blogs) =>
-      blogs.map((blog) =>
-        blog.id === id ? { ...blog, likes: blog.likes + 1 } : blog
-      )
-    )
+
+  const handlerError = ({ data, message }) =>  errorNotification(message || data )
+
+
+  const updateBlog = (blog) => {
+    blogService.update(blog)
+      .then(response => {
+        const id = response.data.id
+        setBlogs((blogs) =>
+          blogs.map((blog) =>
+            blog.id === id ? { ...blog, likes: blog.likes + 1 } : blog
+          )
+        )
+      })
   }
 
   const removeBlog = (id) => {
@@ -88,7 +97,7 @@ const App = () => {
           {logged}
 
           <h2>blogs</h2>
-          <CreateBlog addBlog={addBlog} handlerError={handlerError} />
+          <CreateBlog addBlog={addBlog}  />
           <button onClick={handleSortBlog}>sort by like</button>
 
           <Blogs

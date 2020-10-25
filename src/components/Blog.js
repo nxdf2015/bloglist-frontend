@@ -6,11 +6,10 @@ const Blog = ({ blog , updateBlog, removeBlog }) => {
 
   const [detailsVisible, setVisible] = useState(false)
 
-  const handlerLike = () => {
 
-    blogService.update(blog)
-      .then( ({ data }) => updateBlog(data.id))
-  }
+
+  const handlerLike = () => updateBlog(blog)
+
 
   const handlerRemove = () => {
     if (window.confirm(`remove ${blog.title} by ${blog.author}`)){
@@ -21,7 +20,7 @@ const Blog = ({ blog , updateBlog, removeBlog }) => {
 
   return (
     <div className='blog-container'>
-      {detailsVisible ? <BlogDetails blog={blog} handlerLike={handlerLike} /> : <div className='blog-info'>{blog.title}</div>}
+      {detailsVisible ? <BlogDetails {...blog} handlerLike={handlerLike} /> : <div className='blog-info'>{blog.title}</div>}
 
       <button className='btn-view' onClick={() => setVisible((visible) => !visible)}>
         {detailsVisible ? 'hidde' : 'view'}
@@ -37,7 +36,7 @@ const BlogDetails = ({   title, author, likes ,handlerLike }) => (
   <div className="blog-details">
     <div>{title}</div>
     <div>{author}</div>
-    <div>likes {likes} <button onClick={handlerLike} >like</button></div>
+    <div>likes {likes} <button className='btn-click' onClick={handlerLike} >like</button></div>
   </div>
 )
 

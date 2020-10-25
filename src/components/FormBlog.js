@@ -1,23 +1,18 @@
 import React, { useState } from 'react'
 
-import blogService from '../services/blogs'
 
-const CreateBlog =  ({ addBlog , handlerError }) => {
+
+const CreateBlog =  ({ addBlog  }) => {
   const [blog, setBlog] = useState({ title: '', author: '', url: '' })
 
-  const handleCreate =async (event) => {
+  const handleCreate =  (event) => {
     event.preventDefault()
-    blogService.create(blog)
-      .then(response => addBlog(response.data))
-      .catch(error => handlerError({ ...error.response , message:'error creation blog all fields required' }))
-
-
-  }
+    addBlog(blog) }
 
   return (
     <div>
       <h1>create new</h1>
-      <form onSubmit={handleCreate}>
+      <form id="create-form"onSubmit={handleCreate}>
         <div>
           <label>
             title
