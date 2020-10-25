@@ -16,6 +16,14 @@ const App = () => {
   const [logged, setLogged] = useState(islogged())
   const [user, setUser] = useState({})
 
+  const [message, setMessage] = useState('')
+
+  const [visible, setVisible] = useState(false)
+
+  const [type, setType] = useState('success')
+
+  const [sorted, setSorted] = useState(false)
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
   }, [])
@@ -39,14 +47,6 @@ const App = () => {
     getToken()
   }, [])
 
-  const [message, setMessage] = useState('')
-
-  const [visible, setVisible] = useState(false)
-
-  const [type, setType] = useState('success')
-
-  const [sorted, setSorted] = useState(false)
-
   const setLogin = (user) => {
     usersService
       .create(user)
@@ -60,16 +60,6 @@ const App = () => {
         setLogged(false)
         errorNotification('invalid credential')
       })
-    // setLogged(state)
-    // setMessage(state ? 'logged' : 'deconnected')
-
-    // if (response.status === 200) {
-    //   setType('success')
-    // } else {
-    //   setType('error')
-    // }
-    // setVisible(true)
-    // setTimeout(() => setVisible(false), 2000)
   }
 
   const setLogOut = () => {
@@ -88,6 +78,7 @@ const App = () => {
     setType(type)
     wait(() => setMessage(message))
   }
+
   const successNotification = (message) => notification(message, 'success')
 
   const errorNotification = (message) => notification(message, 'error')
