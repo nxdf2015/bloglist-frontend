@@ -15,7 +15,7 @@ const Login = ({ getState, handlerError }) => {
         setToken(token)
         usersService.decodeToken(token)
           .then(response => setUser({ username : response.data.username }))
-          //.catch(error => handlerError({ data: error.data , message : 'invalid token' }))
+
 
       }
     }
