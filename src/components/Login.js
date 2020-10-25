@@ -31,7 +31,7 @@ const Login = ({ setLogin, setLogOut, isLogged }) => {
       ) : (
         <>
           <h2>Log in to application</h2>
-          <form onSubmit={handleSubmit}>
+          <form data-test="login-form" onSubmit={handleSubmit}>
             <div>
               <label>
                 username
