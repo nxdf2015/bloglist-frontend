@@ -1,20 +1,19 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const Blog = ({ blog , updateBlog, removeBlog }) => {
+
+const Blog = ({ blog , updateLike, removeBlog }) => {
 
 
   const [detailsVisible, setVisible] = useState(false)
 
 
 
-  const handlerLike = () => updateBlog(blog)
+  const handlerLike = () => updateLike(blog)
 
 
   const handlerRemove = () => {
     if (window.confirm(`remove ${blog.title} by ${blog.author}`)){
-      blogService.remove(blog)
-      removeBlog(blog.id)
+      removeBlog(blog)
     }
   }
 
@@ -36,7 +35,7 @@ const BlogDetails = ({   title, author, likes ,handlerLike }) => (
   <div className="blog-details">
     <div>{title}</div>
     <div>{author}</div>
-    <div>likes {likes} <button className='btn-click' onClick={handlerLike} >like</button></div>
+    <div>likes  {likes} <button className='btn-like' onClick={handlerLike} >like</button></div>
   </div>
 )
 

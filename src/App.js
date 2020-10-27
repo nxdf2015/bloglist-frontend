@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import Blogs from './components/Blogs'
+import React, { useState, useEffect  } from 'react'
+
 import blogService from './services/blogs'
+import usersService from './services/users'
+
+import Blogs from './components/Blogs'
+import CreateBlog from './components/CreateBlog'
 
 import Login from './components/Login'
-import CreateBlog from './components/CreateBlog'
-import usersService from './services/users'
+
 import Notification from './components/Notification'
 
 import './App.css'
@@ -14,7 +17,7 @@ const App = () => {
 
   const islogged = () => localStorage.getItem('token') !== null
   const [logged, setLogged] = useState(islogged())
-  const [user, setUser] = useState({})
+  const [  ,  setUser] = useState({})
 
   const [message, setMessage] = useState('')
 
@@ -98,11 +101,13 @@ const App = () => {
       )
   }
 
-  const handlerError = ({ data, message }) =>
-    errorNotification(message || data)
+  const handlerError = (data   ) =>
+    errorNotification(data.message || data.data)
 
-  const updateBlog = (blog) => {
-    blogService.update(blog).then((response) => {
+
+
+  const updateLike = (blog) => {
+    blogService.updateLike(blog).then((response) => {
       const id = response.data.id
       setBlogs((blogs) =>
         blogs.map((blog) =>
@@ -112,8 +117,21 @@ const App = () => {
     })
   }
 
-  const removeBlog = (id) => {
-    setBlogs((blogs) => blogs.filter((blog) => blog.id !== id))
+  const removeBlog = (blog) => {
+    blogService.remove(blog).then(() =>  {
+      setBlogs((blogs) => blogs.filter((item) => blog.id !== item.id))
+      successNotification(`remove ${blog.title} by ${blog.author}`)
+    })
+      .catch(error => {
+        let message
+        if (!localStorage.getItem('token')){
+          message=  'you must logged and author of the blog to remove it' }
+        else {
+          message = 'error connection'
+        }
+        handlerError({ ...error,message })
+      })
+
   }
 
   const handleSortBlog = () => {
@@ -128,16 +146,16 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           <CreateBlog addBlog={addBlog} handlerError={handlerError} />
-          <button onClick={handleSortBlog}>sort by like</button>
-
-          <Blogs
-            blogs={blogs}
-            removeBlog={removeBlog}
-            updateBlog={updateBlog}
-            sorted={sorted}
-          />
         </div>
       )}
+
+      <button onClick={handleSortBlog}>sort by like</button>
+      <Blogs
+        blogs={blogs}
+        removeBlog={removeBlog}
+        updateLike={updateLike}
+        sorted={sorted}
+      />
     </div>
   )
 }

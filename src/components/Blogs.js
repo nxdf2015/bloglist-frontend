@@ -3,18 +3,15 @@ import PropTypes from 'prop-types'
 
 import Blog from './Blog'
 
-const Blogs = ({ blogs, updateBlog, removeBlog, sorted }) => {
+const Blogs = ({ blogs, updateLike, removeBlog, sorted }) => {
   if (sorted) {
     blogs.sort((a, b) => (a.likes < b.likes ? 1 : -1))
   }
-  return blogs.map((blog) => (
-    <Blog
-      removeBlog={removeBlog}
-      updateBlog={updateBlog}
-      key={blog.id}
-      blog={blog}
-    />
-  ))
+  return  <div data-test="list-blog">{
+    blogs.map((blog) => (
+      <Blog key={blog.id} removeBlog={removeBlog} updateLike={updateLike} blog={blog} />))}
+  </div>
+
 }
 
 Blogs.propTypes = {
@@ -26,7 +23,7 @@ Blogs.propTypes = {
       id: PropTypes.string.isRequired,
     })
   ).isRequired,
-  updateBlog: PropTypes.func.isRequired,
+  updateLike: PropTypes.func.isRequired,
   removeBlog: PropTypes.func.isRequired,
   sorted: PropTypes.bool,
 }

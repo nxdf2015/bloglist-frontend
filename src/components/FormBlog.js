@@ -1,18 +1,23 @@
 import React, { useState } from 'react'
 
+const defaultBlog = { title: '', author: '', url: '' }
 
-
-const CreateBlog =  ({ addBlog  }) => {
+const CreateBlog =  ({ addBlog ,toogleVisibility }) => {
   const [blog, setBlog] = useState({ title: '', author: '', url: '' })
 
   const handleCreate =  (event) => {
     event.preventDefault()
-    addBlog(blog) }
+    addBlog(blog)
+    toogleVisibility()
+    setBlog(defaultBlog)
+
+  }
+
 
   return (
     <div>
       <h1>create new</h1>
-      <form id="create-form"onSubmit={handleCreate}>
+      <form data-test="create-form"onSubmit={handleCreate}>
         <div>
           <label>
             title

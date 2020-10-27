@@ -18,13 +18,10 @@ const create = async (blog) => {
   return response
 }
 
-const update = async (blog) => {
+const updateLike = async (blog) => {
   const response = await axios({
-    method: 'PUT',
-    url: baseUrl + '/' + blog.id,
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
+    method: 'PATCH',
+    url: baseUrl + '/' + blog.id + '/like',
     data: { blog, likes: blog.likes + 1 },
   })
   return response
@@ -33,7 +30,7 @@ const update = async (blog) => {
 const remove = async (blog) => {
   const response = await axios({
     method: 'DELETE',
-    url: baseUrl + '/' + blog.id,
+    url: baseUrl + '/' +  blog.id,
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
@@ -41,4 +38,4 @@ const remove = async (blog) => {
   return response
 }
 
-export default { getAll, create, update, remove }
+export default { getAll, create, updateLike, remove }
